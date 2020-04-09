@@ -31,7 +31,15 @@ Third, consider a school with average faculty salary of $50,000 and average SAT 
 
 Fourth (and optional! not covered in the book!), check out the `predict()` function. This allows you to avoid typing out the formula yourself.
 
+```{r 7, echo = FALSE}
 
+model_1 <- lm(earnings ~ faculty+sat, data = x)
+
+model_1
+
+predict(model_1, newdata = tibble(sat = 1200, faculty = 50))
+
+```
 
 ### Scene 8
 
@@ -44,6 +52,30 @@ Second, define what the residual is.
 Third, determine the school with the largest positive residual and the school with the largest negative residual.
 
 Fourth, speculate about what causes these residuals. What is the model missing? How might we improve the model?
+
+```{r 8, echo = FALSE}
+
+resid_model <- model_1 %>%
+   augment(data = x) %>%
+  mutate(conf.low = .fitted - 2 * .se.fit,
+         conf.high = .fitted + 2 * .se.fit)
+
+# The residual is the difference between the fitted earnings and the actual 
+# earnings.
+
+resid_model %>%
+  arrange(desc(.resid)) %>%
+  slice(1) %>%
+  pull(name)
+
+
+resid_model %>%
+  arrange(.resid) %>%
+  slice(1) %>%
+  pull(name)
+
+```
+
 
 
 ### Scene 9
@@ -58,7 +90,17 @@ Third, use `tidy()` to find the confidence intervals for the regression coeffici
 
 Fourth, interpret the confidence interval for coefficient on `public` using one sentence for the Bayesian interpretation and one sentence for the Frequentist interpretation.
 
+```{r 9, echo = FALSE}
 
+lm(earnings ~ public + price, data = x)
+
+model_2 <- lm(earnings ~ public*price, data = x)
+
+model_2 %>%
+  tidy(conf.int = TRUE)
+
+
+```
 
 ### Scene 10
 
